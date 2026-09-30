@@ -34,3 +34,29 @@ main.bg-neutral-950{background:transparent!important}
 .border-neutral-800{border-color:rgba(255,255,255,.1)!important}
 main>div{animation:up .6s both}
 tbody tr{transition:background .2s}
+
+/* DP-THEME-V2 */
+.dp-toggle{position:fixed;top:14px;right:14px;z-index:60;padding:6px 14px;border-radius:999px;font-size:12px;color:#e5e5e5;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);cursor:pointer;transition:transform .2s}
+.dp-toggle:hover{transform:scale(1.06)}
+.confetti{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
+html[data-theme=light] .dp-toggle{color:#18181b;background:rgba(255,255,255,.8);border-color:rgba(0,0,0,.15)}
+html[data-theme=light] body{background:#f5f4fa;color:#18181b}
+html[data-theme=light] body::before{background:radial-gradient(600px 400px at 10% 0%,rgba(249,115,22,.2),transparent),radial-gradient(600px 400px at 100% 100%,rgba(124,58,237,.16),transparent)}
+html[data-theme=light] .text-neutral-100,html[data-theme=light] .text-neutral-200,html[data-theme=light] .text-white{color:#18181b}
+html[data-theme=light] .text-neutral-300{color:#3f3f46}
+html[data-theme=light] .text-neutral-400,html[data-theme=light] .text-neutral-500{color:#6b6b76}
+html[data-theme=light] .bg-neutral-900{background:rgba(255,255,255,.78)!important}
+html[data-theme=light] .bg-neutral-800{background:rgba(0,0,0,.07)}
+html[data-theme=light] .border-neutral-800,html[data-theme=light] .border-neutral-700,html[data-theme=light] .border-white\/10,html[data-theme=light] .border-white\/15{border-color:rgba(0,0,0,.13)!important}
+html[data-theme=light] .bg-black\/30{background:rgba(255,255,255,.85)!important}
+html[data-theme=light] .glass,html[data-theme=light] .face{background:rgba(255,255,255,.7);border-color:rgba(0,0,0,.1);box-shadow:0 8px 30px rgba(0,0,0,.08)}
+html[data-theme=light] .back{background:linear-gradient(135deg,rgba(249,115,22,.25),rgba(124,58,237,.2))}
+html[data-theme=light] .bgfx{background:#f5f4fa}
+html[data-theme=light] .orb{opacity:.22}
+html[data-theme=light] .text-green-300{color:#15803d}
+html[data-theme=light] .text-yellow-300,html[data-theme=light] .text-yellow-200{color:#a16207}
+html[data-theme=light] .text-red-300,html[data-theme=light] .text-red-400,html[data-theme=light] .text-red-200{color:#b91c1c}
+html[data-theme=light] .text-blue-300{color:#1d4ed8}
+html[data-theme=light] .hover\:bg-neutral-900:hover{background:rgba(0,0,0,.05)!important}
+html[data-theme=light] .ex:hover{background:rgba(249,115,22,.12)}

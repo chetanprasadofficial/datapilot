@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "./home.css";
 
@@ -20,6 +20,18 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const router = useRouter();
+  const [splash, setSplash] = useState(true);
+  const [ph, setPh] = useState(0);
+  const [copied, setCopied] = useState(-1);
+  useEffect(() => {
+    if (sessionStorage.getItem("dp_splash")) { setSplash(false); return; }
+    const t = setTimeout(() => { setSplash(false); sessionStorage.setItem("dp_splash", "1"); }, 3600);
+    return () => clearTimeout(t);
+  }, []);
+  useEffect(() => {
+    const t = setInterval(() => setPh((n) => (n + 1) % EXAMPLES.length), 3000);
+    return () => clearInterval(t);
+  }, []);
 
   async function go(text: string) {
     if (text.trim().length < 5) return;
@@ -42,6 +54,18 @@ export default function Home() {
 
   return (
     <main className="min-h-screen text-neutral-100">
+      {splash && (
+        <div className="splash" onClick={() => setSplash(false)}>
+          <div className="splash-logo">
+            {"DataPilot".split("").map((ch, i) => (
+              <span key={i} className={i >= 4 ? "pilot" : ""} style={{ animationDelay: i * 0.09 + "s" }}>{ch}</span>
+            ))}
+          </div>
+          <p className="splash-tag">Ask for data. Trust every row.</p>
+          <div className="splash-bar"><i /></div>
+          <small>tap to skip</small>
+        </div>
+      )}
       <div className="bgfx"><div className="orb o1" /><div className="orb o2" /><div className="orb o3" /></div>
       <div className="mx-auto max-w-3xl px-6 py-14">
         <div className="up flex items-center justify-between">
@@ -59,7 +83,7 @@ export default function Home() {
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="e.g. Find remote software developer jobs posted in the last 30 days"
+            placeholder={"e.g. " + EXAMPLES[ph]}
             className="h-28 w-full resize-none rounded-xl border border-white/10 bg-black/30 p-4 text-base outline-none focus:border-orange-400"
           />
           <button
@@ -75,15 +99,10 @@ export default function Home() {
         <h2 className="up mt-10 text-sm uppercase tracking-widest text-neutral-400" style={{ animationDelay: ".4s" }}>Try an example</h2>
         <div className="mt-3 space-y-2">
           {EXAMPLES.map((ex, i) => (
-            <button
-              key={ex}
-              onClick={() => { setPrompt(ex); go(ex); }}
-              disabled={busy}
-              className="ex glass up block w-full p-3 text-left text-sm text-neutral-200 disabled:opacity-50"
-              style={{ animationDelay: 0.45 + i * 0.08 + "s", borderRadius: 12 }}
-            >
-              {ex}
-            </button>
+            <div key={ex} className="ex glass up flex items-center gap-3 p-3" style={{ animationDelay: 0.45 + i * 0.08 + "s", borderRadius: 12 }}>
+              <button onClick={() => { setPrompt(ex); go(ex); }} disabled={busy} className="flex-1 text-left text-sm text-neutral-200 disabled:opacity-50">{ex}</button>
+              <button onClick={() => { navigator.clipboard.writeText(ex); setCopied(i); setTimeout(() => setCopied(-1), 1500); }} className="shrink-0 rounded-md border border-white/15 px-2.5 py-1 text-xs text-neutral-300 hover:border-orange-400">{copied === i ? "Copied" : "Copy"}</button>
+            </div>
           ))}
         </div>
 

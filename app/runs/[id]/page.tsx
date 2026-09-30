@@ -1,6 +1,27 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+
+function CountUp({ to }: { to: number }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf = 0; const t0 = performance.now();
+    const step = (t: number) => { const p = Math.min(1, (t - t0) / 1200); setN(Math.round(to * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to]);
+  return <>{n}</>;
+}
+function Confetti() {
+  const cols = ["#f97316", "#a78bfa", "#22d3ee", "#f472b6", "#facc15"];
+  return (
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      {Array.from({ length: 70 }).map((_, i) => (
+        <i key={i} className="confetti" style={{ left: ((i * 37) % 100) + "%", background: cols[i % 5], animationDelay: (i % 10) * 0.08 + "s", animationDuration: 2 + (i % 5) * 0.4 + "s" }} />
+      ))}
+    </div>
+  );
+}
 
 const DONE = ["done", "partial", "failed", "cancelled"];
 const BADGE: Record<string, string> = {
@@ -37,6 +58,8 @@ export default function RunPage() {
   const [sortDir, setSortDir] = useState(-1);
   const [err, setErr] = useState("");
 
+  const [party, setParty] = useState(false);
+  const live = useRef(false);
   const finished = !!info && DONE.includes(info.run.status);
 
   useEffect(() => {
@@ -47,7 +70,7 @@ export default function RunPage() {
         if (stop) return;
         if (d.error) { setErr(d.error); return; }
         setInfo(d);
-        if (!DONE.includes(d.run.status)) setTimeout(tick, 1500);
+        if (!DONE.includes(d.run.status)) { live.current = true; setTimeout(tick, 1500); } else if (live.current || (d.run.finished_at && Date.now() - Date.parse(d.run.finished_at) < 15000)) { setParty(true); setTimeout(() => setParty(false), 4500); }
       } catch {
         if (!stop) setTimeout(tick, 3000);
       }
@@ -103,12 +126,13 @@ export default function RunPage() {
   const card = (label: string, v: any) => (
     <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4">
       <p className="text-xs uppercase tracking-widest text-neutral-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{v ?? "—"}</p>
+      <p className="mt-1 text-2xl font-semibold">{typeof v === "number" ? <CountUp to={v} /> : v ?? "—"}</p>
     </div>
   );
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100">
+      {party && <Confetti />}
       <div className="mx-auto max-w-6xl px-6 py-10">
         <a href="/" className="text-sm text-neutral-500 hover:text-neutral-300">← New request</a>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
