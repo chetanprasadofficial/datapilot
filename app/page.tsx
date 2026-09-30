@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const EXAMPLES = [
-  "Find remote or Delhi-NCR software internships posted in the last 7 days",
-  "Collect recent Hacker News posts about startups raising funding, with title, link and date",
-  "From this page (a public hackathon listing that allows crawling), list upcoming hackathons in India with dates and prizes",
+"Find remote software developer jobs posted in the last 30 days",
+"Collect recent Hacker News posts about startups raising funding, with title, link and date",
+"Find remote or Delhi-NCR software internships posted in the last 7 days",
 ];
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="e.g. Find remote software internships posted in the last 7 days"
+          placeholder="e.g. Find remote software developer jobs posted in the last 30 days"
           className="mt-8 h-32 w-full rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-base outline-none focus:border-orange-400"
         />
         <button
