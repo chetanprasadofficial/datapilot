@@ -63,7 +63,7 @@ Rules:
 
 function templatePlan(prompt: string): PlanT {
   const p = prompt.toLowerCase();
-  const kw = p.split(/\W+/).filter((w) => w.length > 3).slice(0, 4);
+  const kw = p.split(/\W+/).filter((w) => w.length > 3 && !/^(find|list|collect|recent|posted|last|days|weeks|from|with|that|jobs?|remote)$/.test(w)).slice(0, 4);
   const note = ["Template plan used because the AI planner was unavailable"];
 
   if (/funding|startup|hacker news|launch|news/.test(p)) {
@@ -105,6 +105,29 @@ function templatePlan(prompt: string): PlanT {
   });
 }
 
+export function enforce(prompt: string, plan: PlanT): PlanT {
+  const p = prompt.toLowerCase();
+  const filters: Record<string, any> = { ...plan.filters };
+  const m = p.match(/(?:last|past|previous)\s+(\d+)\s*(day|week|month)s?/);
+  if (m) {
+    const n = Number(m[1]);
+    filters.max_age_days = m[2] === "day" ? n : m[2] === "week" ? n * 7 : n * 30;
+  }
+  if (plan.entity === "job_posting" && /\bremote\b/.test(p)) {
+    filters.location = /delhi|ncr|noida|gurgaon|gurugram/.test(p) ? "Remote, Delhi-NCR" : "remote";
+  }
+  let sources = plan.sources.map((x) =>
+    x.connector === "hn_algolia" && filters.max_age_days
+      ? { ...x, params: { ...x.params, days: filters.max_age_days } }
+      : x
+  );
+  if (plan.entity === "job_posting" && !/hacker news|\bhn\b/.test(p)) {
+    const apis = sources.filter((x) => x.connector !== "hn_algolia");
+    if (apis.length) sources = apis;
+  }
+  return { ...plan, filters, sources };
+}
+
 export async function planFromPrompt(prompt: string) {
   let lastErr = "";
   let raw = "";
@@ -118,12 +141,13 @@ export async function planFromPrompt(prompt: string) {
       const out = await callGemini(input);
       raw = JSON.stringify(out);
       const parsed = Plan.safeParse(out);
-      if (parsed.success) return { plan: parsed.data, raw, via: "llm" as const };
+      if (parsed.success) return { plan: enforce(prompt, parsed.data), raw, via: "llm" as const };
       lastErr = parsed.error.message.slice(0, 500);
     } catch (e: any) {
       lastErr = String(e?.message ?? e).slice(0, 300);
       break; // network or API failure: do not wait through more retries
     }
   }
-  return { plan: templatePlan(prompt), raw: raw || "template fallback: " + lastErr, via: "template" as const };
+  console.error("PLANNER FALLBACK:", lastErr, "| RAW:", raw.slice(0, 600));
+  return { plan: enforce(prompt, templatePlan(prompt)), raw: raw || "template fallback: " + lastErr, via: "template" as const };
 }
