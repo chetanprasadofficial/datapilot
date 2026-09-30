@@ -88,7 +88,7 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-Create the tables in your Supabase project (`<PATH_TO_SQL_SCHEMA_FILE_IF_YOU_HAVE_ONE>`), then:
+Create the tables in your Supabase project (`supabase/schema.sql`), then:
 
 ```bash
 npm run dev
