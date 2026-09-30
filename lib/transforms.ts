@@ -81,11 +81,23 @@ export function normalizeItem(item: RawItem, plan: PlanT): Rec {
   return { data, canon: c, items: [item], completeness: filled / Math.max(1, plan.fields.length), score: 0, key: "" };
 }
 
+const STOP = new Set(["software","senior","junior","jobs","job","the","and","for","in","of","remote","posted","recent","latest","hiring","role","roles","position","positions"]);
+const ROLE = ["developer", "engineer", "programmer"];
 function keywords(plan: PlanT): string[] {
   const k = plan.filters?.keywords;
-  const arr = Array.isArray(k) ? k : typeof k === "string" ? k.split(/[,\s]+/) : [];
-  return arr.map((x: any) => String(x).toLowerCase().trim()).filter(Boolean);
+  const arr = Array.isArray(k) ? k : typeof k === "string" ? k.split(",") : [];
+  const out = new Set<string>();
+  for (const phrase of arr) {
+    for (const w of String(phrase).toLowerCase().split(/[^a-z0-9+#.]+/)) {
+      if (w.length < 2 || STOP.has(w)) continue;
+      if (ROLE.includes(w)) ROLE.forEach((x) => out.add(x));
+      else out.add(w);
+    }
+  }
+  return [...out];
 }
+const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const hit = (hay: string, k: string) => new RegExp("\\b" + esc(k) + "(?:s|ship|ing)?\\b").test(hay);
 const haystack = (c: Canon) =>
   [c.title, c.company, (c.tags || []).join(" "), c.text].filter(Boolean).join(" ").toLowerCase();
 
@@ -112,7 +124,7 @@ export function validateRec(rec: Rec, plan: PlanT): string | null {
   if (plan.filters?.location && rec.canon.location && !locationOk(rec.canon.location, plan.filters.location))
     return "location does not match";
   const kws = keywords(plan);
-  if (kws.length && !kws.some((k) => haystack(rec.canon).includes(k))) return "no keyword match";
+  if (kws.length && !kws.some((k) => hit(haystack(rec.canon), k))) return "no keyword match";
   return null;
 }
 
@@ -147,7 +159,7 @@ export function rank(recs: Rec[], plan: PlanT) {
   const maxAge = Number(plan.filters?.max_age_days) || 30;
   for (const r of recs) {
     const hay = haystack(r.canon);
-    const hits = kws.filter((k) => hay.includes(k)).length;
+    const hits = kws.filter((k) => hit(hay, k)).length;
     let fresh = 0;
     if (r.canon.posted_at) {
       const age = (Date.now() - Date.parse(r.canon.posted_at)) / 86400000;

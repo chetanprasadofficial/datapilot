@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100">
       <div className="mx-auto max-w-3xl px-6 py-16">
-        <p className="text-sm tracking-widest text-orange-400">DATAPILOT</p>
+        <div className="flex items-center justify-between"><p className="text-sm tracking-widest text-orange-400">DATAPILOT</p><a href="/history" className="text-sm text-neutral-400 hover:text-white">History →</a></div>
         <h1 className="mt-3 text-4xl font-semibold">Describe the data you need.</h1>
         <p className="mt-2 text-lg text-neutral-400">Get a clean, sourced dataset.</p>
 

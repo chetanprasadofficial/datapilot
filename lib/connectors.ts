@@ -32,10 +32,12 @@ async function fetchJson(url: string): Promise<any> {
 }
 
 async function remotive(params: any): Promise<RawItem[]> {
-  const url =
-    "https://remotive.com/api/remote-jobs?limit=50&search=" + encodeURIComponent(params.search || "");
+  const s = String(params.search || "");
+  const url = /develop|engineer|software|programm|intern|sde/i.test(s)
+    ? "https://remotive.com/api/remote-jobs?category=software-dev&limit=100"
+    : "https://remotive.com/api/remote-jobs?limit=50&search=" + encodeURIComponent(s);
   const data = await fetchJson(url);
-  return (data.jobs || []).slice(0, 50).map((j: any) => ({
+  return (data.jobs || []).slice(0, 100).map((j: any) => ({
     connector: "remotive",
     raw: j,
     source_url: j.url,
@@ -45,7 +47,12 @@ async function remotive(params: any): Promise<RawItem[]> {
 }
 
 async function arbeitnow(params: any): Promise<RawItem[]> {
-  const data = await fetchJson("https://www.arbeitnow.com/api/job-board-api");
+  const pages = await Promise.all(
+    [1, 2, 3].map((p) =>
+      fetchJson("https://www.arbeitnow.com/api/job-board-api?page=" + p).catch(() => ({ data: [] }))
+    )
+  );
+  const data = { data: pages.flatMap((p: any) => p.data || []) };
   const terms = String(params.search || "")
     .toLowerCase()
     .split(/\s+/)
@@ -56,7 +63,7 @@ async function arbeitnow(params: any): Promise<RawItem[]> {
       const t = `${j.title} ${(j.tags || []).join(" ")} ${j.description || ""}`.toLowerCase();
       return terms.some((x) => t.includes(x));
     })
-    .slice(0, 50)
+    .slice(0, 150)
     .map((j: any) => ({
       connector: "arbeitnow",
       raw: j,
