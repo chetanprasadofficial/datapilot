@@ -121,8 +121,10 @@ export function validateRec(rec: Rec, plan: PlanT): string | null {
     const age = (Date.now() - Date.parse(rec.canon.posted_at)) / 86400000;
     if (age > maxAge) return `older than ${maxAge} days`;
   }
-  if (plan.filters?.location && rec.canon.location && !locationOk(rec.canon.location, plan.filters.location))
+  if (plan.filters?.location && (!rec.canon.location || !locationOk(rec.canon.location, plan.filters.location)))
     return "location does not match";
+  if (plan.entity === "job_posting" && /\b(sales|network|service desk|helpdesk|support|customer|hardware|mechanical|civil|electrical|security|data scientist)\b/i.test(rec.canon.title || ""))
+    return "not a software role";
   const kws = keywords(plan);
   if (kws.length && !kws.some((k) => hit(haystack(rec.canon), k))) return "no keyword match";
   return null;
