@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function PlanPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [wf, setWf] = useState<any>(null);
   const [err, setErr] = useState("");
+  const [runErr, setRunErr] = useState("");
+  const [busy, setBusy] = useState(false);
   const [off, setOff] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
@@ -14,6 +17,25 @@ export default function PlanPage() {
       .then((d) => (d.error ? setErr(d.error) : setWf(d)))
       .catch((e) => setErr(String(e)));
   }, [id]);
+
+  async function run() {
+    setBusy(true);
+    setRunErr("");
+    const disabledSources = Object.keys(off).filter((k) => off[Number(k)]).map(Number);
+    try {
+      const res = await fetch("/api/runs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workflowId: id, overrides: { disabledSources } }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not start the run");
+      router.push("/runs/" + d.runId);
+    } catch (e: any) {
+      setRunErr(e.message);
+      setBusy(false);
+    }
+  }
 
   if (err) return <main className="p-10 text-red-400">{err}</main>;
   if (!wf) return <main className="p-10 text-neutral-400">Loading plan...</main>;
@@ -46,7 +68,7 @@ export default function PlanPage() {
         </section>
 
         <section className="mt-6">
-          <h2 className="text-xs uppercase tracking-widest text-neutral-500">Sources</h2>
+          <h2 className="text-xs uppercase tracking-widest text-neutral-500">Sources (switch off any you do not want)</h2>
           <div className="mt-2 space-y-2">
             {p.sources.map((s: any, i: number) => (
               <label key={i} className="flex cursor-pointer items-center justify-between rounded-lg border border-neutral-800 bg-neutral-900 p-3">
@@ -72,9 +94,10 @@ export default function PlanPage() {
         <p className="mt-8 text-xs text-neutral-500">
           Only permitted sources are used. Web pages are checked against robots.txt.
         </p>
-        <button disabled className="mt-4 rounded-lg bg-orange-500 px-5 py-2.5 font-medium text-black opacity-60">
-          Run (coming next)
+        <button onClick={run} disabled={busy} className="mt-4 rounded-lg bg-orange-500 px-5 py-2.5 font-medium text-black disabled:opacity-50">
+          {busy ? "Starting..." : "Run workflow"}
         </button>
+        {runErr && <p className="mt-3 text-sm text-red-400">{runErr}</p>}
       </div>
     </main>
   );
