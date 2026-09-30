@@ -138,6 +138,10 @@ lib/
   db.ts                 Supabase client
 ```
 
+## Documentation
+
+Full technical documentation: [docs/DataPilot_Documentation.pdf](docs/DataPilot_Documentation.pdf)
+
 ## License
 
-`<ADD LICENSE, e.g. MIT>`
+MIT. See the LICENSE file.
