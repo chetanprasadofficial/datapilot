@@ -92,7 +92,7 @@ export default function PlanPage() {
         )}
 
         <p className="mt-8 text-xs text-neutral-500">
-          Only permitted sources are used. Web pages are checked against robots.txt.
+          Only permitted public API sources are used.
         </p>
         <button onClick={run} disabled={busy} className="mt-4 rounded-lg bg-orange-500 px-5 py-2.5 font-medium text-black disabled:opacity-50">
           {busy ? "Starting..." : "Run workflow"}
