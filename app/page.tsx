@@ -1,6 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import CursorGlow from "./CursorGlow";
 import "./home.css";
 
 const EXAMPLES = [
@@ -8,10 +10,11 @@ const EXAMPLES = [
   "Collect recent Hacker News posts about startups raising funding, with title, link and date",
   "Find remote or Delhi-NCR software internships posted in the last 7 days",
 ];
+
 const CARDS = [
   ["01", "Describe", "Type what you need in plain English.", "Gemini turns your words into a structured plan."],
   ["02", "Review", "See fields, filters and sources.", "Switch any source off before you run."],
-  ["03", "Run", "Watch five live pipeline steps.", "collect, normalize, validate, dedupe, rank."],
+  ["03", "Run", "Watch five live pipeline steps.", "collect · normalize · validate · dedupe · rank."],
   ["04", "Inspect", "Every row shows its source.", "Rejected rows keep their reason."],
 ];
 
@@ -23,13 +26,21 @@ export default function Home() {
   const [splash, setSplash] = useState(true);
   const [ph, setPh] = useState(0);
   const [copied, setCopied] = useState(-1);
+
   useEffect(() => {
-    if (sessionStorage.getItem("dp_splash")) { setSplash(false); return; }
-    const t = setTimeout(() => { setSplash(false); sessionStorage.setItem("dp_splash", "1"); }, 3600);
+    if (sessionStorage.getItem("dp_splash")) {
+      setSplash(false);
+      return;
+    }
+    const t = setTimeout(() => {
+      setSplash(false);
+      sessionStorage.setItem("dp_splash", "1");
+    }, 5200);
     return () => clearTimeout(t);
   }, []);
+
   useEffect(() => {
-    const t = setInterval(() => setPh((n) => (n + 1) % EXAMPLES.length), 3000);
+    const t = setInterval(() => setPh((n) => (n + 1) % EXAMPLES.length), 3200);
     return () => clearInterval(t);
   }, []);
 
@@ -53,75 +64,182 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen text-neutral-100">
+    <>
+      <CursorGlow />
+
       {splash && (
-        <div className="splash" onClick={() => setSplash(false)}>
-          <div className="splash-logo">
-            {"DataPilot".split("").map((ch, i) => (
-              <span key={i} className={i >= 4 ? "pilot" : ""} style={{ animationDelay: i * 0.09 + "s" }}>{ch}</span>
-            ))}
+        <div className="dp-splash" onClick={() => setSplash(false)}>
+          <div className="dp-splash-grid" />
+          <div className="dp-splash-orb dp-splash-orb-a" />
+          <div className="dp-splash-orb dp-splash-orb-b" />
+
+          <div className="dp-splash-top">
+            <span>INTELLIGENCE PLATFORM</span>
+            <span>01 / DATA PILOT</span>
           </div>
-          <p className="splash-tag">Ask for data. Trust every row.</p>
-          <div className="splash-bar"><i /></div>
-          <small>tap to skip</small>
+
+          <div className="dp-stack">
+            <div className="dp-stack-panel panel-a">
+              <span>01</span><b>DISCOVER</b><small>Find patterns inside your data.</small>
+            </div>
+            <div className="dp-stack-panel panel-b">
+              <span>02</span><b>DIRECT</b><small>Turn questions into structured plans.</small>
+            </div>
+            <div className="dp-stack-panel panel-c">
+              <span>03</span><b>INSPECT</b><small>Trace every result back to its source.</small>
+            </div>
+            <div className="dp-brand-panel">
+              <span className="dp-kicker">INTELLIGENCE PLATFORM</span>
+              <h1>DATA PILOT</h1>
+              <p>Turn Data Into Direction.</p>
+              <div className="dp-brand-line" />
+            </div>
+          </div>
+
+          <div className="dp-splash-bottom">
+            <span>ASK FOR DATA · TRUST EVERY ROW</span>
+            <span>CLICK TO SKIP</span>
+          </div>
         </div>
       )}
-      <div className="bgfx"><div className="orb o1" /><div className="orb o2" /><div className="orb o3" /></div>
-      <div className="mx-auto max-w-3xl px-6 py-14">
-        <div className="up flex items-center justify-between">
-          <p className="text-sm tracking-widest text-orange-400">DATAPILOT</p>
-          <a href="/history" className="text-sm text-neutral-400 hover:text-white">History →</a>
-        </div>
-        <h1 className="up mt-3 text-5xl font-bold leading-tight" style={{ animationDelay: ".1s" }}>
-          Describe the data<br /><span className="grad">you need.</span>
-        </h1>
-        <p className="up mt-3 text-lg text-neutral-300" style={{ animationDelay: ".2s" }}>
-          Get a clean, sourced dataset. Every row traceable, every rejection explained.
-        </p>
 
-        <div className="glass up mt-8 p-4" style={{ animationDelay: ".3s" }}>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder={"e.g. " + EXAMPLES[ph]}
-            className="h-28 w-full resize-none rounded-xl border border-white/10 bg-black/30 p-4 text-base outline-none focus:border-orange-400"
-          />
-          <button
-            onClick={() => go(prompt)}
-            disabled={busy}
-            className="btn-glow mt-3 rounded-lg bg-orange-500 px-6 py-2.5 font-semibold text-black disabled:opacity-50"
-          >
-            {busy ? "Planning..." : "Create plan"}
-          </button>
-          {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
+      <main className="dp-home min-h-screen text-neutral-100">
+        <div className="dp-bgfx" aria-hidden="true">
+          <div className="dp-orb dp-o1" />
+          <div className="dp-orb dp-o2" />
+          <div className="dp-orb dp-o3" />
+          <div className="dp-grid" />
         </div>
 
-        <h2 className="up mt-10 text-sm uppercase tracking-widest text-neutral-400" style={{ animationDelay: ".4s" }}>Try an example</h2>
-        <div className="mt-3 space-y-2">
-          {EXAMPLES.map((ex, i) => (
-            <div key={ex} className="ex glass up flex items-center gap-3 p-3" style={{ animationDelay: 0.45 + i * 0.08 + "s", borderRadius: 12 }}>
-              <button onClick={() => { setPrompt(ex); go(ex); }} disabled={busy} className="flex-1 text-left text-sm text-neutral-200 disabled:opacity-50">{ex}</button>
-              <button onClick={() => { navigator.clipboard.writeText(ex); setCopied(i); setTimeout(() => setCopied(-1), 1500); }} className="shrink-0 rounded-md border border-white/15 px-2.5 py-1 text-xs text-neutral-300 hover:border-orange-400">{copied === i ? "Copied" : "Copy"}</button>
+        <div className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10">
+          <header className="dp-nav dp-enter flex items-center justify-between">
+            <div className="dp-wordmark">
+              <span className="dp-wordmark-dot" />
+              DATA PILOT
             </div>
-          ))}
-        </div>
+            <nav className="flex items-center gap-2">
+              <a href="/history" className="dp-nav-link">History <span>↗</span></a>
+              <a href="/history" className="dp-nav-pill">Workspace</a>
+            </nav>
+          </header>
 
-        <h2 className="up mt-12 text-sm uppercase tracking-widest text-neutral-400">How it works (hover a card)</h2>
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {CARDS.map(([n, t, a, b], i) => (
-            <div key={n} tabIndex={0} className="flip up" style={{ animationDelay: 0.6 + i * 0.1 + "s" }}>
-              <div className="flip-in">
-                <div className="face">
-                  <span className="text-xs text-orange-400">{n}</span>
-                  <span className="text-xl font-semibold">{t}</span>
-                  <span className="mt-1 text-xs text-neutral-400">{a}</span>
+          <section className="dp-hero">
+            <div className="dp-hero-copy dp-enter">
+              <div className="dp-eyebrow"><i /> DATA INTELLIGENCE / 01</div>
+              <h1>
+                Ask for data.
+                <br />
+                <span>Get direction.</span>
+              </h1>
+              <p>
+                Describe what you need in plain English. Data Pilot builds a
+                structured research plan and returns a clean, traceable dataset.
+              </p>
+            </div>
+
+            <div className="dp-command-wrap dp-enter" style={{ animationDelay: ".18s" }}>
+              <div className="dp-command glass">
+                <div className="dp-command-top">
+                  <span>RESEARCH COMMAND</span>
+                  <span className="dp-live"><i /> READY</span>
                 </div>
-                <div className="face back"><span className="text-sm">{b}</span></div>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder={"e.g. " + EXAMPLES[ph]}
+                  className="dp-textarea"
+                />
+                <div className="dp-command-bottom">
+                  <span className="dp-hint">Plain English → structured workflow</span>
+                  <button
+                    onClick={() => go(prompt)}
+                    disabled={busy}
+                    className="dp-run-btn"
+                  >
+                    {busy ? "Planning…" : "Create plan"} <b>↗</b>
+                  </button>
+                </div>
+                {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
               </div>
             </div>
-          ))}
+
+            <div className="dp-metrics dp-enter" style={{ animationDelay: ".28s" }}>
+              <div><strong>01</strong><span>DESCRIBE</span></div>
+              <div><strong>05</strong><span>PIPELINE STEPS</span></div>
+              <div><strong>∞</strong><span>TRACEABLE ROWS</span></div>
+            </div>
+          </section>
+
+          <section className="dp-section dp-enter" style={{ animationDelay: ".38s" }}>
+            <div className="dp-section-head">
+              <div>
+                <span className="dp-section-no">01</span>
+                <h2>Start with a question.</h2>
+              </div>
+              <span className="dp-section-note">QUICK PROMPTS</span>
+            </div>
+
+            <div className="dp-examples">
+              {EXAMPLES.map((ex, i) => (
+                <div key={ex} className="dp-example glass">
+                  <button
+                    onClick={() => { setPrompt(ex); go(ex); }}
+                    disabled={busy}
+                    className="dp-example-main"
+                  >
+                    <span className="dp-example-index">0{i + 1}</span>
+                    <span>{ex}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(ex);
+                      setCopied(i);
+                      setTimeout(() => setCopied(-1), 1500);
+                    }}
+                    className="dp-copy"
+                  >
+                    {copied === i ? "COPIED" : "COPY"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="dp-section dp-enter" style={{ animationDelay: ".48s" }}>
+            <div className="dp-section-head">
+              <div>
+                <span className="dp-section-no">02</span>
+                <h2>How the pilot works.</h2>
+              </div>
+              <span className="dp-section-note">HOVER TO EXPLORE</span>
+            </div>
+
+            <div className="dp-process-grid">
+              {CARDS.map(([n, t, a, b], i) => (
+                <div key={n} tabIndex={0} className="dp-process">
+                  <div className="dp-process-inner">
+                    <div className="dp-process-face">
+                      <div className="dp-process-number">{n}</div>
+                      <h3>{t}</h3>
+                      <p>{a}</p>
+                      <span className="dp-arrow">↗</span>
+                    </div>
+                    <div className="dp-process-face dp-process-back">
+                      <span>PROCESS / {n}</span>
+                      <p>{b}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <footer className="dp-footer">
+            <span>DATA PILOT</span>
+            <span>TURN DATA INTO DIRECTION.</span>
+          </footer>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
