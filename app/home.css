@@ -127,3 +127,10 @@
   .dp-stack-panel b{font-size:25px}
   .dp-brand-panel{padding:32px 18px}
 }
+
+/* DP-HOME-PINKGOLD */
+.dp-eyebrow i,.dp-live i{background:#fbbf24!important;box-shadow:0 0 12px #f472b6!important}
+.dp-hero-copy h1 span{background:linear-gradient(100deg,#fff 5%,#f9a8d4 45%,#fbbf24 90%)!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important}
+.dp-run-btn{background:linear-gradient(135deg,#f472b6,#fbbf24)!important;color:#1a1a1a!important;border-color:rgba(251,191,36,.45)!important;box-shadow:0 10px 35px rgba(244,114,182,.28)!important}
+.dp-splash-orb-a{background:#fbbf24!important}
+.dp-splash-orb-b{background:#ec4899!important}

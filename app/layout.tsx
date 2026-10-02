@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import DataHelix from "./DataHelix";
 import ThemeToggle from "./ThemeToggle";
 import CursorGlow from "./CursorGlow";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <CursorGlow />
         <ThemeToggle />
+        <DataHelix />
       </body>
     </html>
   );

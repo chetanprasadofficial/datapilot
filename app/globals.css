@@ -101,3 +101,42 @@ html[data-theme=light] .bg-neutral-900{background:rgba(255,255,255,.78)!importan
 html[data-theme=light] .bg-neutral-800{background:rgba(0,0,0,.07)}
 html[data-theme=light] .border-neutral-800,html[data-theme=light] .border-neutral-700{border-color:rgba(0,0,0,.13)!important}
 html[data-theme=light] .bg-black\/30{background:rgba(255,255,255,.85)!important}
+
+/* DP-PINKGOLD */
+.bg-orange-500{background:linear-gradient(135deg,#f97316,#f472b6 55%,#fbbf24)!important;color:#1a1a1a!important}
+.bg-orange-500:hover{filter:brightness(1.08);box-shadow:0 6px 24px rgba(244,114,182,.35)}
+.text-orange-400{color:#fbbf24!important}
+a.text-orange-400{color:#f9a8d4!important}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(500px 360px at 85% 8%,rgba(244,114,182,.22),transparent),radial-gradient(520px 380px at 12% 92%,rgba(251,191,36,.16),transparent)}
+.bg-neutral-900{box-shadow:0 0 0 1px rgba(244,114,182,.10),0 10px 30px rgba(251,191,36,.05)}
+.bg-neutral-900:hover,.glass:hover,.ex:hover{border-color:rgba(244,114,182,.45)!important}
+thead.bg-neutral-900{background-image:linear-gradient(90deg,rgba(244,114,182,.14),rgba(251,191,36,.10))!important}
+::selection{background:rgba(244,114,182,.4)}
+
+/* DP-BG-PINKGOLD */
+html::before{content:"";position:fixed;inset:-6%;z-index:0;pointer-events:none;mix-blend-mode:screen;
+  background:
+    radial-gradient(760px 560px at 8% 4%, rgba(244,114,182,.38), transparent 62%),
+    radial-gradient(700px 520px at 96% 8%, rgba(251,191,36,.30), transparent 62%),
+    radial-gradient(820px 620px at 78% 100%, rgba(120,133,255,.34), transparent 62%),
+    radial-gradient(680px 520px at 2% 96%, rgba(157,73,255,.28), transparent 62%);
+  animation:dpBgDrift 16s ease-in-out infinite alternate}
+@keyframes dpBgDrift{from{transform:translate(-1.5%,1%) scale(1)}to{transform:translate(1.5%,-1%) scale(1.07)}}
+html[data-theme=light]::before{display:none}
+main.bg-neutral-950{background:transparent!important}
+.bg-neutral-900{background:rgba(255,255,255,.05)!important;backdrop-filter:blur(14px)}
+html[data-theme=light] .bg-neutral-900{background:rgba(255,255,255,.78)!important}
+
+/* DP-BG-V2 */
+html:not([data-theme=light]) body,
+html:not([data-theme=light]) .dp-home,
+html:not([data-theme=light]) .dp-bgfx{background:transparent!important}
+html::before{z-index:-1!important;mix-blend-mode:normal!important;opacity:1!important;
+  background:
+    radial-gradient(760px 560px at 8% 4%, rgba(244,114,182,.42), transparent 62%),
+    radial-gradient(700px 520px at 96% 8%, rgba(251,191,36,.34), transparent 62%),
+    radial-gradient(820px 620px at 78% 100%, rgba(120,133,255,.36), transparent 62%),
+    radial-gradient(680px 520px at 2% 96%, rgba(157,73,255,.30), transparent 62%)!important}
+
+/* DP-HELIX */
+html[data-theme=light] .dp-helix{display:none}
