@@ -5,7 +5,7 @@
 DataPilot turns a natural-language request into a data-collection workflow, runs it against permitted public sources, cleans and deduplicates the results, and shows every row with its provenance. Rows that get dropped are kept, with the reason.
 
 - **Live demo:** `https://datapilot-gamma.vercel.app`
-- **Demo video:** `<YOUR_VIDEO_LINK>`
+- **Demo video:** `https://youtu.be/BiOWbAibl4g`
 
 ## The problem
 
